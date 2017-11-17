@@ -1,6 +1,6 @@
 {
   "name": "@rappopo/nesu",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "description": "Stream CouchDB changes to Elasticsearch",
   "keywords": ["couchdb", "elasticsearch", "changes", "changes stream"],
   "main": "index.js",

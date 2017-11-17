@@ -196,6 +196,11 @@ module.exports = function() {
   fs.ensureDirSync(process.cwd() + '/last_seq')
   fs.ensureDirSync(process.cwd() + '/transformer')
   try {
+    fs.accessSync(process.cwd() + '/config.json')
+  } catch(e) {
+    fs.writeJsonSync(process.cwd() + '/config.json', {}, { spaces: 2 })
+  }
+  try {
     cfg = _.merge(cfg, require(process.cwd() + '/config.json'))
   } catch(e) {
     quit(e.message)

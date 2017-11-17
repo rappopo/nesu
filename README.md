@@ -1,8 +1,90 @@
 # @rappopo/nesu
 
-This is Nesu, a CouchDB to Elasticsearch synchronizer, or CouchDB changes input plugin for Logstash contender, or "CouchDB River Plugin resurrection", or whatever you want it to call.
+This is **Nesu**, a CouchDB to Elasticsearch synchronizer, or CouchDB changes input plugin for Logstash contender, or "CouchDB River Plugin resurrection", or whatever you want it to call.
 
-More info coming soon...
+## Setup
+
+Go to your node.js application project folder, and type:
+
+    npm install --save @rappopo/nesu
+
+Create an empty new js file, e.g.: **nesu.js**, and enter the following code:
+
+    var nesu = require('@rappopo/nesu')
+    nesu()
+
+Also create the *config.json* configuration file in the same folder as **nesu.js** file above like this example below:
+
+    {
+        "db": {
+            "mydb1": {
+                "idleTimeout": 0
+            },
+            "mydb2": {
+                "cdb": {
+                    "url": "http://couchdb:5984"
+                },
+                "es": {
+                    "url": "http://elasticsearch:9200"
+                },
+                "bulkLimit": 500,
+                "idleTimeout": 10
+            }
+        },
+        "default": {
+            "bulkLimit": 5000
+        }
+    }
+
+And finaly: 
+
+    node nesu.js
+
+But most likely you'll want to use a process manager like **pm2**.
+
+Program will automatically create an empty *config.js* file if missing. Two empty folders *transformer* and *last_seq* will also be created.
+
+## Configuration File
+
+You need to create/edit the configuration file *config.js* in the same folder as your bootstrap file. Please see the example above.
+
+### Main Entries
+
+`db.<mydb>.<prop>`: put your database info here. `<mydb>` is the name of CouchDB database you want to stream to Elasticsearch. Put as many databases you want here, **Nesu** will stream all away.
+
+`default.<prop>`: serve as default properties. Will be used if none are provided in `db.<mydb>.<prop>` section.
+
+### Properties
+
+`bulkLimit`: max. number of documents in a bulk operation. Optional, defaults to 1000 documents
+
+`idleTimeout`: how long to wait for a new changes to arrive. In seconds, optional, default to 2 seconds. If you put 0 in it, it'll use continuous stream provided by *nano.db.follow* instead of regular polling (*nano.db.changes*)
+
+`cdb.url`: the url of your CouchDB server endpoint. Optional, defaults to http://localhost:5984
+
+`es.url`: the url of your Elasticsearch endpoint. Optional, defaults to http://localhost:9200
+
+`es.typeField`: document's key name to be used as Elasticsearch's type field. Optional, defaults to **doc**. 
+
+## Transformer
+
+You have the ability to transform each document to something new before written to Elasticsearch easily. 
+
+All you need to do is just create a new js file inside the *transformer* folder with the exact name as its corresponding database. E.g. if your database name is *mydb*, than your transformer file will be *mydb.js*
+
+And use the following code fragment as your start:
+
+    module.exports = function(doc, callback) {
+        .....
+        callback(doc)
+    }
+
+
+## Last Sequence
+
+Everytime a bulk of documents is written to Elasticsearch, its last sequence is written in a file named after the database name, inside *last_seq* folder.
+
+To reset the sequence from the very beginning, just delete the file. To start from an exact known sequence, just override its content. And to start from the actual one, put 'now' (without the quotes) in it
 
 ## License
 
