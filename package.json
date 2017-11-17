@@ -1,0 +1,15 @@
+{
+  "name": "@rappopo/nesu",
+  "version": "0.0.1",
+  "description": "Stream CouchDB changes to Elasticsearch",
+  "main": "index.js",
+  "author": "Ardhi Lukianto <ardhi@lukianto.com>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.0",
+    "elasticsearch": "^14.0.0",
+    "fs-extra": "^4.0.2",
+    "lodash": "^4.17.4",
+    "nano": "^6.4.2"
+  }
+}
