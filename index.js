@@ -181,7 +181,7 @@ function sync(db, callback) {
         console.log('%s - %s - Elasticsearch Err: DB Not Found', now(), db.name)
         return callback()        
       }
-      var seqFile = './last_seq/' + db.name + '.txt'
+      var seqFile = process.cwd() + '/last_seq/' + db.name + '.txt'
       if (db.idleTimeout > 0) {
         polling(db, nano, es, seqFile)
       } else {
@@ -193,10 +193,10 @@ function sync(db, callback) {
 }
 
 module.exports = function() {
-  fs.ensureDirSync('./last_seq')
-  fs.ensureDirSync('./transformer')
+  fs.ensureDirSync(process.cwd() + '/last_seq')
+  fs.ensureDirSync(process.cwd() + '/transformer')
   try {
-    cfg = _.merge(cfg, require('./config.json'))
+    cfg = _.merge(cfg, require(process.cwd() + '/config.json'))
   } catch(e) {
     quit(e.message)
   }
@@ -217,7 +217,7 @@ module.exports = function() {
       cb(doc) 
     }
     try {
-      db.transformer = require('./transformer/' + db.name + '.js')
+      db.transformer = require(process.cwd() + '/transformer/' + db.name + '.js')
     } catch(e) {}
     sync(db, callback)
   }, function(e, r) {
