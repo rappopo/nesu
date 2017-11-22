@@ -192,7 +192,8 @@ function sync(db, callback) {
   })
 }
 
-module.exports = function() {
+module.exports = function(param) {
+  param = param || {}
   fs.ensureDirSync(process.cwd() + '/last_seq')
   fs.ensureDirSync(process.cwd() + '/transformer')
   try {
@@ -207,6 +208,8 @@ module.exports = function() {
   }
 
   if (_.isEmpty(cfg)) quit('Unable to load configuration')
+
+  if (param.config) cfg = _.merge(cfg, param.config)
   if (_.isEmpty(_.keys(cfg.db))) quit('No database to sync')
 
   async.mapSeries(_.keys(cfg.db), function(c, callback) {
