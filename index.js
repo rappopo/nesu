@@ -56,7 +56,7 @@ function processBulk(param, callback) {
     } else {
       param.es.bulk({
         refresh: 'true',
-        index: param.db.name,
+        index: param.db.es.name,
         body: bulk
       }, function(err, resp) {
         if (err) return callback(err)
@@ -78,7 +78,7 @@ function polling(db, nano, es, seqFile) {
         try {
           since = _.trim(fs.readFileSync(seqFile, 'utf8'))
         } catch(e) {}
-        nano.db.changes(db.name, {
+        nano.db.changes(db.cdb.name, {
           limit: db.bulkLimit || 1000,
           since: since,
           include_docs: true
@@ -105,7 +105,7 @@ function continuous(db, nano, es, seqFile) {
     since = _.trim(fs.readFileSync(seqFile, 'utf8'))
   } catch(e) {}
   var bulk = []
-  var feed = nano.db.follow(db.name, {
+  var feed = nano.db.follow(db.cdb.name, {
     since: since,
     include_docs: true,
   })
@@ -171,12 +171,13 @@ function sync(db, callback) {
       host: db.es.url || cfg.default.es.url,
       apiVersion: db.es.apiVersion || cfg.default.es.apiVersion || '5.6'
     })
-  nano.db.get(db.name, function(err) {
+
+  nano.db.get(db.cdb.name, function(err) {
     if (err) {
       console.log('%s - %s - CouchDB Err: %s', now(), db.name, err.message)
       return callback()
     }
-    es.indices.exists({ index: db.name }, function(err, resp, status) {
+    es.indices.exists({ index: db.es.name }, function(err, resp, status) {
       if (!resp) {
         console.log('%s - %s - Elasticsearch Err: DB Not Found', now(), db.name)
         return callback()        
@@ -216,7 +217,9 @@ module.exports = function(param) {
     var db = cfg.db[c]
     db.name = c
     db.cdb = db.cdb || cfg.default.cdb
+    db.cdb.name = db.cdb.name || c
     db.es = db.es || cfg.default.es
+    db.es.name = db.es.name || c
     db.idleTimeout = _.has(db, 'idleTimeout') ? db.idleTimeout : cfg.default.idleTimeout
     db.bulkLimit = _.has(db, 'bulkLimit') ? db.bulkLimit : cfg.default.bulkLimit
     db.transformer = function(doc, cb) { 

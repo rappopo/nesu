@@ -1,6 +1,6 @@
 # @rappopo/nesu
 
-This is **Nesu**, a CouchDB to Elasticsearch synchronizer, or CouchDB changes input plugin for Logstash contender, or "CouchDB River Plugin resurrection", or whatever you want it to call.
+This is **Nesu**, a CouchDB to Elasticsearch synchronizer, or CouchDB changes input plugin for Logstash "contender", or "CouchDB River Plugin resurrection", or whatever you want it to call.
 
 ## Setup as Command Line Tool
 
@@ -12,7 +12,7 @@ Go to your project folder, and invoke:
 
     $ nesu
 
-The first time **Nesu** starts, it'll create an empty *config.json* configuration file and *last_seq* folder in your project folder. Quit **Nesu** by pressing `Ctrl-c` and start customizing its configurations (please see details below).
+The first time **Nesu** starts, it'll create an empty *config.json* configuration file, *transformer* and *last_seq* folder in your project folder. Quit **Nesu** by pressing `Ctrl-c` and start customizing its configurations (please see details below).
 
 ## Setup as a Library
 
@@ -34,10 +34,12 @@ Also create the *config.json* configuration file in the same folder as **nesu.js
             },
             "mydb2": {
                 "cdb": {
-                    "url": "http://couchdb:5984"
+                    "url": "http://couchdb:5984",
+                    "name": "mycouchdb1"
                 },
                 "es": {
-                    "url": "http://elasticsearch:9200"
+                    "url": "http://elasticsearch:9200",
+                    "name": "myesindex1"
                 },
                 "bulkLimit": 500,
                 "idleTimeout": 10
@@ -50,11 +52,19 @@ Also create the *config.json* configuration file in the same folder as **nesu.js
 
 And finaly: 
 
-    node nesu.js
+    $ node nesu.js
 
 But most likely you'll want to use a process manager like **pm2**.
 
 Program will automatically create an empty *config.js* file if missing. Two empty folders *transformer* and *last_seq* will also be created.
+
+You might also want to change the configuration object above dynamically within your script, like this:
+
+    ...
+    nesu({ config: <config> })
+    ...
+
+The value of `<config>` will simply be merged with the above configuration file.
 
 ## Configuration File
 
@@ -74,7 +84,11 @@ You need to create/edit the configuration file *config.js* in the same folder as
 
 `cdb.url`: the url of your CouchDB server endpoint. Optional, defaults to http://localhost:5984
 
+`cdb.name`: name of CouchDB database if different from the db's key name. Optional, defaults to the db's key
+
 `es.url`: the url of your Elasticsearch endpoint. Optional, defaults to http://localhost:9200
+
+`es.name`: name of Elasticsearch index if different from the db's key name. Optional, defaults to the db's key
 
 `es.typeField`: document's key name to be used as Elasticsearch's type field. Optional, defaults to **doc**. 
 
@@ -94,7 +108,7 @@ And use the following code fragment as your start:
 
 ## Last Sequence
 
-Everytime a bulk of documents is written to Elasticsearch, its last sequence is written in a file named after the database name, inside *last_seq* folder.
+Everytime a bulk of documents is written to Elasticsearch, its last sequence is saved in a file named after the database name, inside *last_seq* folder.
 
 To reset the sequence from the very beginning, just delete the file. To start from an exact known sequence, just override its content. And to start from the actual one, put 'now' (without the quotes) in it
 
