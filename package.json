@@ -1,8 +1,13 @@
 {
   "name": "@rappopo/nesu",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Stream CouchDB changes to Elasticsearch",
-  "keywords": ["couchdb", "elasticsearch", "changes", "changes stream"],
+  "keywords": [
+    "couchdb",
+    "elasticsearch",
+    "changes",
+    "changes stream"
+  ],
   "main": "index.js",
   "author": "Ardhi Lukianto <ardhi@lukianto.com>",
   "repository": {
@@ -10,6 +15,9 @@
     "url": "git+https://github.com/rappopo/nesu.git"
   },
   "license": "MIT",
+  "bin": {
+    "nesu": "./bin/nesu"
+  },
   "dependencies": {
     "async": "^2.6.0",
     "elasticsearch": "^14.0.0",

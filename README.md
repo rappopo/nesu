@@ -2,11 +2,23 @@
 
 This is **Nesu**, a CouchDB to Elasticsearch synchronizer, or CouchDB changes input plugin for Logstash contender, or "CouchDB River Plugin resurrection", or whatever you want it to call.
 
-## Setup
+## Setup as Command Line Tool
+
+Run this to install **Nesu** as a global package:
+
+    $ npm install -g @rappopo/nesu
+
+Go to your project folder, and invoke:
+
+    $ nesu
+
+The first time **Nesu** starts, it'll create an empty *config.json* configuration file and *last_seq* folder in your project folder. Quit **Nesu** by pressing `Ctrl-c` and start customizing its configurations (please see details below).
+
+## Setup as a Library
 
 Go to your node.js application project folder, and type:
 
-    npm install --save @rappopo/nesu
+    $ npm install --save @rappopo/nesu
 
 Create an empty new js file, e.g.: **nesu.js**, and enter the following code:
 
