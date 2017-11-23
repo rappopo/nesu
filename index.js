@@ -214,23 +214,23 @@ module.exports = function(param) {
   if (_.isEmpty(_.keys(cfg.db))) quit('No database to sync')
 
   async.mapSeries(_.keys(cfg.db), function(c, callback) {
-    var db = cfg.db[c]
-    db.name = c
-    db.cdb = db.cdb || cfg.default.cdb
-    db.cdb.name = db.cdb.name || c
-    db.es = db.es || cfg.default.es
-    db.es.name = db.es.name || c
-    db.idleTimeout = _.has(db, 'idleTimeout') ? db.idleTimeout : cfg.default.idleTimeout
-    db.bulkLimit = _.has(db, 'bulkLimit') ? db.bulkLimit : cfg.default.bulkLimit
-    db.transformer = function(doc, cb) { 
+    var mydb = _.cloneDeep(cfg.db[c])
+    mydb.name = c
+    mydb.cdb = _.merge(_.cloneDeep(cfg.default.cdb), mydb.cdb)
+    mydb.cdb.name = _.has(mydb.cdb, 'name') ? mydb.cdb.name : c
+    mydb.es = _.merge(_.cloneDeep(cfg.default.es), mydb.es)
+    mydb.es.name = _.has(mydb.es, 'name') ? mydb.es.name : c
+    mydb.idleTimeout = _.has(mydb, 'idleTimeout') ? mydb.idleTimeout : cfg.default.idleTimeout
+    mydb.bulkLimit = _.has(mydb, 'bulkLimit') ? mydb.bulkLimit : cfg.default.bulkLimit
+    mydb.transformer = function(doc, cb) {
       delete doc._id
       delete doc._rev
-      cb(doc) 
+      cb(doc)
     }
     try {
-      db.transformer = require(process.cwd() + '/transformer/' + db.name + '.js')
+      mydb.transformer = require(process.cwd() + '/transformer/' + mydb.name + '.js')
     } catch(e) {}
-    sync(db, callback)
+    sync(mydb, callback)
   }, function(e, r) {
     console.log('**** enter the loop ****')
   })
