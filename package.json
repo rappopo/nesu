@@ -7,7 +7,7 @@
     "elasticsearch",
     "changes",
     "changes stream",
-    "dab-couch-es",
+    "dab-couch-es"
   ],
   "main": "index.js",
   "author": "Ardhi Lukianto <ardhi@lukianto.com>",
