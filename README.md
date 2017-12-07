@@ -6,11 +6,15 @@ This is **Nesu**, a CouchDB to Elasticsearch synchronizer, or CouchDB changes in
 
 Run this to install **Nesu** as a global package:
 
-    $ npm install -g @rappopo/nesu
+```
+$ npm install -g @rappopo/nesu
+```
 
 Go to your project folder, and invoke:
 
-    $ nesu
+```
+$ nesu
+```
 
 The first time **Nesu** starts, it'll create an empty *config.json* configuration file, *transformer* and *last_seq* folder in your project folder. Quit **Nesu** by pressing `Ctrl-c` and start customizing its configurations (please see details below).
 
@@ -18,41 +22,49 @@ The first time **Nesu** starts, it'll create an empty *config.json* configuratio
 
 Go to your node.js application project folder, and type:
 
-    $ npm install --save @rappopo/nesu
+```
+$ npm install --save @rappopo/nesu
+```
 
 Create an empty new js file, e.g.: **nesu.js**, and enter the following code:
 
-    var nesu = require('@rappopo/nesu')
-    nesu()
+```javascript
+var nesu = require('@rappopo/nesu')
+nesu()
+```
 
 Also create the *config.json* configuration file in the same folder as **nesu.js** file above like this example below:
 
-    {
-        "db": {
-            "mydb1": {
-                "idleTimeout": 0
-            },
-            "mydb2": {
-                "cdb": {
-                    "url": "http://couchdb:5984",
-                    "name": "mycouchdb1"
-                },
-                "es": {
-                    "url": "http://elasticsearch:9200",
-                    "name": "myesindex1"
-                },
-                "bulkLimit": 500,
-                "idleTimeout": 10
-            }
-        },
-        "default": {
-            "bulkLimit": 5000
-        }
+```javascript
+{
+  "db": {
+    "mydb1": {
+      "idleTimeout": 0
+    },
+    "mydb2": {
+      "cdb": {
+        "url": "http://couchdb:5984",
+        "name": "mycouchdb1"
+      },
+      "es": {
+        "url": "http://elasticsearch:9200",
+        "name": "myesindex1"
+      },
+      "bulkLimit": 500,
+      "idleTimeout": 10
     }
+  },
+  "default": {
+    "bulkLimit": 5000
+  }
+}
+```
 
 And finaly: 
 
-    $ node nesu.js
+```
+$ node nesu.js
+```
 
 But most likely you'll want to use a process manager like **pm2**.
 
@@ -60,9 +72,11 @@ Program will automatically create an empty *config.js* file if missing. Two empt
 
 You might also want to change the configuration object above dynamically within your script, like this:
 
-    ...
-    nesu({ config: <config> })
-    ...
+```javascript
+...
+nesu({ config: <config> })
+...
+```
 
 The value of `<config>` will simply be merged with the above configuration file.
 
@@ -100,17 +114,23 @@ All you need to do is just create a new js file inside the *transformer* folder 
 
 And use the following code fragment as your start:
 
-    module.exports = function(doc, callback) {
-        .....
-        callback(doc)
-    }
-
+```javascript
+module.exports = function(doc, callback) {
+  .....
+  callback(doc)
+}
+```
 
 ## Last Sequence
 
 Everytime a bulk of documents is written to Elasticsearch, its last sequence is saved in a file named after the database name, inside *last_seq* folder.
 
 To reset the sequence from the very beginning, just delete the file. To start from an exact known sequence, just override its content. And to start from the actual one, put 'now' (without the quotes) in it
+
+## Misc
+
+* [@rappopo/dab-couch-es](https://github.com/rappopo/dab-couch-es), a data access layer for this kind of system
+* Donation: Bitcoin **16HVCkdaNMvw3YdBYGHbtt3K5bmpRmH74Y**
 
 ## License
 
